@@ -681,7 +681,9 @@ const Select = React.createClass({
 
 			return options.map((option, i) => {
 				let isSelected = valueArray && valueArray.indexOf(option) > -1;
-				let isFocused = option === focusedOption;
+				let isFocused = focusedOption
+					? ((option.value === focusedOption.value) && (option.label === focusedOption.label))
+					: null
 				let optionRef = isFocused ? 'focused' : null;
 				let optionClass = classNames({
 					'Select-option': true,
@@ -732,10 +734,32 @@ const Select = React.createClass({
 	getFocusableOption (selectedOption) {
 		var options = this._visibleOptions;
 		if (!options.length) return;
+
 		let focusedOption = this.state.focusedOption || selectedOption;
-		if (focusedOption && options.indexOf(focusedOption) > -1) return focusedOption;
+
+		if (focusedOption && this.validateFocusableOption(focusedOption)) {
+			return focusedOption;
+		}
+
 		for (var i = 0; i < options.length; i++) {
 			if (!options[i].disabled) return options[i];
+		}
+	},
+
+	validateFocusableOption (focusedOption) {
+		let options = this._visibleOptions;
+
+		if (options.indexOf(focusedOption) > -1) {
+			return true;
+		}
+
+		for (var i = 0; i < options.length; i++) {
+			let hasMatchedValue = 'value' in options[i] && (options[i].value === focusedOption.value)
+			let hasMatchedLabel = 'label' in options[i] && (options[i].label === focusedOption.label)
+
+			if (hasMatchedLabel && hasMatchedValue) {
+				return true;
+			}
 		}
 	},
 
