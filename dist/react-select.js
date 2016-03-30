@@ -1014,7 +1014,7 @@ var Select = _react2['default'].createClass({
 				return {
 					v: options.map(function (option, i) {
 						var isSelected = valueArray && valueArray.indexOf(option) > -1;
-						var isFocused = option === focusedOption;
+						var isFocused = focusedOption ? option.value === focusedOption.value && option.label === focusedOption.label : null;
 						var optionRef = isFocused ? 'focused' : null;
 						var optionClass = (0, _classnames2['default'])({
 							'Select-option': true,
@@ -1058,19 +1058,45 @@ var Select = _react2['default'].createClass({
 		var _this5 = this;
 
 		if (!this.props.name) return;
-		var value = valueArray.map(function (i) {
-			return stringifyValue(i[_this5.props.valueKey]);
-		}).join(this.props.delimiter);
-		return _react2['default'].createElement('input', { type: 'hidden', ref: 'value', name: this.props.name, value: value, disabled: this.props.disabled });
+		return valueArray.map(function (item, index) {
+			return _react2['default'].createElement('input', { key: 'hidden.' + index,
+				type: 'hidden',
+				ref: 'value' + index,
+				name: _this5.props.name,
+				value: stringifyValue(item[_this5.props.valueKey]),
+				disabled: _this5.props.disabled });
+		});
 	},
 
 	getFocusableOption: function getFocusableOption(selectedOption) {
 		var options = this._visibleOptions;
 		if (!options.length) return;
+
 		var focusedOption = this.state.focusedOption || selectedOption;
-		if (focusedOption && options.indexOf(focusedOption) > -1) return focusedOption;
+
+		if (focusedOption && this.validateFocusableOption(focusedOption)) {
+			return focusedOption;
+		}
+
 		for (var i = 0; i < options.length; i++) {
 			if (!options[i].disabled) return options[i];
+		}
+	},
+
+	validateFocusableOption: function validateFocusableOption(focusedOption) {
+		var options = this._visibleOptions;
+
+		if (options.indexOf(focusedOption) > -1) {
+			return true;
+		}
+
+		for (var i = 0; i < options.length; i++) {
+			var hasMatchedValue = 'value' in options[i] && options[i].value === focusedOption.value;
+			var hasMatchedLabel = 'label' in options[i] && options[i].label === focusedOption.label;
+
+			if (hasMatchedLabel && hasMatchedValue) {
+				return true;
+			}
 		}
 	},
 
