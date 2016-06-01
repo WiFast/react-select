@@ -580,7 +580,7 @@ const Select = React.createClass({
 					</ValueComponent>
 				);
 			});
-		} else if (!this.state.inputValue) {
+		} else {
 			if (isOpen) onClick = null;
 			return (
 				<ValueComponent
