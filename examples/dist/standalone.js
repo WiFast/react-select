@@ -919,14 +919,15 @@ var Select = _react2['default'].createClass({
 			});
 		} else {
 			if (isOpen) onClick = null;
+			var val = this.props.options.length === 1 ? this.props.options[0] : valueArray[0];
 			return _react2['default'].createElement(
 				ValueComponent,
 				{
 					disabled: this.props.disabled,
 					onClick: onClick,
-					value: valueArray[0]
+					value: val
 				},
-				renderLabel(valueArray[0])
+				renderLabel(val)
 			);
 		}
 	},

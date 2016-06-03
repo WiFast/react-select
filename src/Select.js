@@ -582,13 +582,14 @@ const Select = React.createClass({
 			});
 		} else {
 			if (isOpen) onClick = null;
+			const val = this.props.options.length === 1 ? this.props.options[0] : valueArray[0]
 			return (
 				<ValueComponent
 					disabled={this.props.disabled}
 					onClick={onClick}
-					value={valueArray[0]}
+					value={val}
 					>
-					{renderLabel(valueArray[0])}
+					{renderLabel(val)}
 				</ValueComponent>
 			);
 		}
